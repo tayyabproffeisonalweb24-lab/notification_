@@ -1,0 +1,603 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxury Notification System</title>
+
+<style>
+/* ===== PROFESSIONAL COLOR SYSTEM ===== */
+:root {
+    --bg: #080d18;
+    --panel: #111a2b;
+    --panel-light: #17243a;
+    --blue: #3984ff;
+    --cyan: #43e0e8;
+    --text: #f4f7ff;
+    --muted: #96a6bf;
+    --border: rgba(153, 180, 220, 0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(ellipse at 15% 5%,
+        rgba(44, 105, 220, 0.16), transparent 40%),
+        radial-gradient(ellipse at 90% 85%,
+        rgba(29, 195, 208, 0.09), transparent 35%),
+        var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.container {
+    width: 100%;
+    max-width: 900px;
+    padding: 38px;
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    background: rgba(17, 26, 43, 0.82);
+    box-shadow: 0 25px 90px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(18px);
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--cyan);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 17px;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--cyan);
+}
+
+h1 {
+    font-size: clamp(30px, 5vw, 47px);
+    letter-spacing: -1.8px;
+    line-height: 1.15;
+    margin-bottom: 14px;
+}
+
+h1 span {
+    background: linear-gradient(100deg, #ffffff, #62a8ff, #43e0e8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.subtitle {
+    max-width: 580px;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 32px;
+}
+
+/* ===== BUTTONS ===== */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 34px;
+}
+
+.btn {
+    border: 1px solid var(--border);
+    padding: 12px 17px;
+    border-radius: 11px;
+    background: var(--panel-light);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    border-color: var(--cyan);
+    box-shadow: 0 7px 25px rgba(46, 158, 220, 0.12);
+}
+
+.btn-primary {
+    background: linear-gradient(110deg, #2869ee, #347ff5);
+    border-color: transparent;
+    box-shadow: 0 7px 25px rgba(43, 109, 245, 0.2);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(110deg, #3984ff, #25b9d6);
+    border-color: transparent;
+}
+
+/* ===== NOTIFICATION LIST ===== */
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.section-heading h2 {
+    font-size: 17px;
+    letter-spacing: -0.3px;
+}
+
+.counter {
+    font-size: 11px;
+    color: var(--cyan);
+    background: rgba(67, 224, 232, 0.09);
+    border: 1px solid rgba(67, 224, 232, 0.2);
+    padding: 7px 11px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.notification-list {
+    display: grid;
+    gap: 13px;
+}
+
+/* ===== NOTIFICATION CARD ===== */
+.notification {
+    --accent: var(--blue);
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    overflow: hidden;
+    padding: 19px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: linear-gradient(
+        120deg,
+        rgba(27, 42, 66, 0.94),
+        rgba(16, 25, 41, 0.96)
+    );
+    animation: slideIn 0.4s ease both;
+    transition: border-color 0.25s, transform 0.25s;
+}
+
+.notification:hover {
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    transform: translateX(4px);
+}
+
+.notification::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 3px;
+    background: var(--accent);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 13px var(--accent);
+}
+
+.notification.success { --accent: #38d9a9; }
+.notification.warning { --accent: #ffbf69; }
+.notification.error   { --accent: #ff6b81; }
+.notification.info    { --accent: #56a0ff; }
+
+.icon-box {
+    flex-shrink: 0;
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    color: var(--accent);
+    font-size: 20px;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-size: 14px;
+    font-weight: 750;
+    margin: 2px 0 7px;
+}
+
+.notification-message {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.notification-time {
+    display: block;
+    margin-top: 9px;
+    font-size: 10px;
+    color: #6f839f;
+    letter-spacing: 0.4px;
+}
+
+.close-btn {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: #8494ad;
+    font-size: 21px;
+    cursor: pointer;
+    padding: 0 2px;
+    transition: 0.2s;
+}
+
+.close-btn:hover {
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+.progress {
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background: var(--accent);
+    transform-origin: left;
+    animation: shrink 6s linear forwards;
+    opacity: 0.7;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    margin-top: 26px;
+    padding-top: 19px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: #7588a5;
+    font-size: 11px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(13px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shrink {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+.notification.removing {
+    animation: slideOut 0.25s ease forwards;
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: -13px;
+    }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 35px 15px;
+    border: 1px dashed var(--border);
+    border-radius: 15px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 2;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 600px) {
+    body {
+        padding: 13px;
+        align-items: flex-start;
+    }
+
+    .container {
+        margin: 12px 0;
+        padding: 23px 17px;
+        border-radius: 20px;
+    }
+
+    h1 {
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .btn {
+        padding: 12px 8px;
+        font-size: 12px;
+    }
+
+    .notification {
+        padding: 15px 12px;
+        gap: 10px;
+    }
+
+    .icon-box {
+        width: 36px;
+        height: 36px;
+        font-size: 17px;
+    }
+
+    .notification-title {
+        font-size: 13px;
+    }
+
+    .notification-message {
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+    <div class="eyebrow">Next-Gen UI Components</div>
+
+    <h1>Smart <span>Notifications.</span></h1>
+
+    <p class="subtitle">
+        A premium notification experience built for modern SaaS
+        platforms, technology dashboards and professional websites.
+    </p>
+
+    <div class="actions">
+        <button class="btn btn-primary" onclick="addNotification('success')">
+            ✓ Success
+        </button>
+
+        <button class="btn" onclick="addNotification('info')">
+            ⓘ Information
+        </button>
+
+        <button class="btn" onclick="addNotification('warning')">
+            ⚠ Warning
+        </button>
+
+        <button class="btn" onclick="addNotification('error')">
+            ✕ Error
+        </button>
+    </div>
+
+    <div class="section-heading">
+        <h2>Recent Notifications</h2>
+        <span class="counter" id="counter">03 ACTIVE</span>
+    </div>
+
+    <div class="notification-list" id="notificationList">
+
+        <article class="notification success">
+            <div class="icon-box">✓</div>
+            <div class="notification-content">
+                <h3 class="notification-title">Payment Successful</h3>
+                <p class="notification-message">
+                    Your transaction has been completed successfully.
+                    Thank you for choosing our platform.
+                </p>
+                <span class="notification-time">JUST NOW</span>
+            </div>
+            <button class="close-btn" aria-label="Dismiss notification"
+                    onclick="dismissNotification(this)">×</button>
+            <div class="progress"></div>
+        </article>
+
+        <article class="notification info">
+            <div class="icon-box">↗</div>
+            <div class="notification-content">
+                <h3 class="notification-title">System Update</h3>
+                <p class="notification-message">
+                    New dashboard features are available.
+                    Explore the improved experience today.
+                </p>
+                <span class="notification-time">2 MIN AGO</span>
+            </div>
+            <button class="close-btn" aria-label="Dismiss notification"
+                    onclick="dismissNotification(this)">×</button>
+            <div class="progress"></div>
+        </article>
+
+        <article class="notification warning">
+            <div class="icon-box">!</div>
+            <div class="notification-content">
+                <h3 class="notification-title">Security Reminder</h3>
+                <p class="notification-message">
+                    Keep your account secure by updating your
+                    password regularly.
+                </p>
+                <span class="notification-time">5 MIN AGO</span>
+            </div>
+            <button class="close-btn" aria-label="Dismiss notification"
+                    onclick="dismissNotification(this)">×</button>
+            <div class="progress"></div>
+        </article>
+
+    </div>
+
+    <div class="footer">
+        <span>© 2026 Premium UI Studio</span>
+        <span>Designed for modern technology</span>
+    </div>
+
+</main>
+
+<script>
+const list = document.getElementById("notificationList");
+const counter = document.getElementById("counter");
+
+const notificationTypes = {
+    success: {
+        icon: "✓",
+        title: "Operation Successful",
+        message: "Your action has been completed successfully."
+    },
+    info: {
+        icon: "ⓘ",
+        title: "New Information",
+        message: "There is a new update available on your dashboard."
+    },
+    warning: {
+        icon: "!",
+        title: "Attention Required",
+        message: "Please review this notification before continuing."
+    },
+    error: {
+        icon: "×",
+        title: "Something Went Wrong",
+        message: "The requested action could not be completed. Please try again."
+    }
+};
+
+function updateCounter() {
+    const total = list.querySelectorAll(".notification").length;
+    counter.textContent = String(total).padStart(2, "0") + " ACTIVE";
+}
+
+function dismissNotification(button) {
+    const card = button.closest(".notification");
+    if (!card || card.classList.contains("removing")) return;
+
+    card.classList.add("removing");
+
+    card.addEventListener("animationend", () => {
+        card.remove();
+        updateCounter();
+
+        if (list.children.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    All caught up!<br>
+                    No notifications remaining.
+                </div>
+            `;
+        }
+    }, { once: true });
+}
+
+function addNotification(type) {
+    const data = notificationTypes[type];
+    if (!data) return;
+
+    // Remove empty state before adding a notification.
+    const emptyState = list.querySelector(".empty-state");
+    if (emptyState) emptyState.remove();
+
+    const card = document.createElement("article");
+    card.className = `notification ${type}`;
+
+    const icon = document.createElement("div");
+    icon.className = "icon-box";
+    icon.textContent = data.icon;
+
+    const content = document.createElement("div");
+    content.className = "notification-content";
+
+    const title = document.createElement("h3");
+    title.className = "notification-title";
+    title.textContent = data.title;
+
+    const message = document.createElement("p");
+    message.className = "notification-message";
+    message.textContent = data.message;
+
+    const time = document.createElement("span");
+    time.className = "notification-time";
+    time.textContent = "JUST NOW";
+
+    content.append(title, message, time);
+
+    const close = document.createElement("button");
+    close.className = "close-btn";
+    close.textContent = "×";
+    close.setAttribute("aria-label", "Dismiss notification");
+    close.addEventListener("click", () => dismissNotification(close));
+
+    const progress = document.createElement("div");
+    progress.className = "progress";
+
+    card.append(icon, content, close, progress);
+    list.prepend(card);
+
+    updateCounter();
+
+    // Automatically remove this notification after six seconds.
+    window.setTimeout(() => {
+        if (card.isConnected) {
+            dismissNotification(close);
+        }
+    }, 6000);
+}
+
+// Initial notifications disappear automatically after six seconds.
+document.querySelectorAll(".notification").forEach(card => {
+    const close = card.querySelector(".close-btn");
+
+    window.setTimeout(() => {
+        if (card.isConnected) {
+            dismissNotification(close);
+        }
+    }, 6000);
+});
+
+updateCounter();
+</script>
+
+</body>
+</html>
